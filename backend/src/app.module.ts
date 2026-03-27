@@ -28,6 +28,11 @@ import { EventsModule } from './events/events.module';
 import { GraphqlApiModule } from './graphql/graphql.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 
+// Monitoring and Observability Modules
+import { MetricsModule } from './metrics/metrics.module';
+import { LoggingModule } from './logging/logging.module';
+import { AlertingModule } from './alerting/alerting.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -51,7 +56,14 @@ import { AnalyticsModule } from './analytics/analytics.module';
         return factory.createConfig();
       },
     }),
+    
+    // Observability Stack (order matters - tracing first)
     TracingModule,
+    MetricsModule,
+    LoggingModule,
+    AlertingModule,
+    
+    // Application Modules
     TransactionModule,
     SimulatorModule,
     SubmitterModule,
