@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext';
 import { WalletProvider } from './WalletContent';
 import { WebSocketProvider } from './context/WebSocketContext';
 import { appTheme } from './styles/theme';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -28,3 +29,8 @@ root.render(
     </ThemeProvider>
   </React.StrictMode>
 );
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://cra.link/PWA
+serviceWorkerRegistration.register();
