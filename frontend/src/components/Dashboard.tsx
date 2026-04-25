@@ -6,7 +6,7 @@
  * and real-time WebSocket data updates.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useRealtimeDashboard } from '../hooks/useRealtimeDashboard';
 import { useWebSocket } from '../context/WebSocketContext';
@@ -38,7 +38,7 @@ interface StatCardProps {
   trend?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color, trend }) => (
+const StatCard: React.FC<StatCardProps> = memo(({ label, value, icon, color, trend }) => (
   <div
     data-testid={`stat-${label.toLowerCase().replace(/\s/g, '-')}`}
     style={{
@@ -80,7 +80,9 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color, trend })
       )}
     </div>
   </div>
-);
+));
+
+StatCard.displayName = 'StatCard';
 
 // ─── Drill-down Modal ─────────────────────────────────────────────────────────
  
@@ -88,6 +90,8 @@ interface DrillDownModalProps {
   cell: FraudHeatmapCell;
   onClose: () => void;
 }
+
+const DrillDownModal: React.FC<DrillDownModalProps> = memo(({ cell, onClose }) => (
  
 const DrillDownModal: React.FC<DrillDownModalProps> = ({ cell, onClose }) => (
   <div
@@ -149,7 +153,9 @@ const DrillDownModal: React.FC<DrillDownModalProps> = ({ cell, onClose }) => (
       </div>
     </div>
   </div>
-);
+));
+
+DrillDownModal.displayName = 'DrillDownModal';
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
@@ -160,6 +166,29 @@ const Dashboard: React.FC = () => {
   const [drillDownCell, setDrillDownCell] = useState<FraudHeatmapCell | null>(null);
   const { isMobile, isTablet } = useResponsive();
 
+  // Merge live realtime patches on top of snapshot data - memoized to prevent unnecessary recalculations
+  const mergedSummary = useMemo(
+    () => data
+      ? { ...data.summary, ...summaryPatch }
+      : null,
+    [data, summaryPatch]
+  );
+
+  const mergedScoreTrend = useMemo(
+    () => [
+      ...liveScorePoints,
+      ...(data?.creditScoreTrend ?? []),
+    ].slice(0, 100),
+    [liveScorePoints, data]
+  );
+
+  const mergedFraudHeatmap = useMemo(
+    () => [
+      ...(data?.fraudHeatmap ?? []),
+      ...liveFraudCells,
+    ],
+    [data, liveFraudCells]
+  );
   const addNotification = useNotification((state) => state.addNotification);
   const latestBonuses = useRealtimeDashboard().latestBonuses;
 
@@ -168,15 +197,13 @@ const Dashboard: React.FC = () => {
     ? { ...data.summary, ...summaryPatch }
     : null;
 
-  const mergedScoreTrend = [
-    ...liveScorePoints,
-    ...(data?.creditScoreTrend ?? []),
-  ].slice(0, 100);
+  const handleCellClick = useCallback((cell: FraudHeatmapCell) => {
+    setDrillDownCell(cell);
+  }, []);
 
-  const mergedFraudHeatmap = [
-    ...(data?.fraudHeatmap ?? []),
-    ...liveFraudCells,
-  ];
+  const handleCloseModal = useCallback(() => {
+    setDrillDownCell(null);
+  }, []);
 
   const mergedTradingBonuses = data?.tradingBonuses ?? [];
   const mergedBonusBreakdown = data?.bonusBreakdown ?? [];
@@ -377,7 +404,7 @@ const Dashboard: React.FC = () => {
           <FraudRiskHeatmap
             data={mergedFraudHeatmap}
             loading={loading}
-            onCellClick={(cell) => setDrillDownCell(cell)}
+            onCellClick={handleCellClick}
           />
         </div>
         <RiskDistributionChart
@@ -411,7 +438,7 @@ const Dashboard: React.FC = () => {
       {drillDownCell && (
         <DrillDownModal
           cell={drillDownCell}
-          onClose={() => setDrillDownCell(null)}
+          onClose={handleCloseModal}
         />
       )}
 
