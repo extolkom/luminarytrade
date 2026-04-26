@@ -104,18 +104,15 @@ const App: React.FC = () => {
                  key={link.to}
                  to={link.to}
                  onMouseEnter={link.prefetch}
-                 style={{
-                   color: theme.palette.primary.main,
-                   textDecoration: "none",
-                   fontSize: theme.typography.body2.fontSize as string,
-                   fontWeight: 600,
-                   padding: { xs: '8px 12px', sm: '6px 12px' }[theme.breakpoints.up('sm') ? 'sm' : 'xs'] as unknown as string,
-                   borderRadius: '4px',
-                   // Add touch feedback
-                   '&:active': {
-                     backgroundColor: 'rgba(255,255,255,0.1)',
-                   },
-                 }}
+                  style={{
+                    color: theme.palette.primary.main,
+                    textDecoration: "none",
+                    fontSize: theme.typography.body2.fontSize as string,
+                    fontWeight: 600,
+                    padding: { xs: '8px 12px', sm: '6px 12px' }[theme.breakpoints.up('sm') ? 'sm' : 'xs'] as unknown as string,
+                    borderRadius: '4px',
+                    touchAction: 'manipulation', // Eliminates 300ms tap delay on mobile
+                  }}
                >
                  {link.label}
                </Link>

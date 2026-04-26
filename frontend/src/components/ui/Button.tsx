@@ -154,23 +154,24 @@ export const Button: React.FC<ButtonProps> = ({
   const [isHovered, setIsHovered] = React.useState(false);
 const [isActive, setIsActive] = React.useState(false);
 
-const baseStyles: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontWeight: 500,
-  borderRadius: "4px",
-  cursor: disabled || loading ? "not-allowed" : "pointer",
-  opacity: disabled || loading ? 0.6 : 1,
-  transition: "all 0.2s ease",
-  whiteSpace: "nowrap",
-  width: fullWidth ? "100%" : undefined,
-  ...VARIANT_STYLES[variant],
-  ...SIZE_STYLES[size],
-  ...(isHovered && !disabled && !loading ? HOVER_STYLES[variant] : {}),
-  ...(isActive && !disabled && !loading ? ACTIVE_STYLES[variant] : {}),
-  ...style,
-};
+ const baseStyles: CSSProperties = {
+   display: "inline-flex",
+   alignItems: "center",
+   justifyContent: "center",
+   fontWeight: 500,
+   borderRadius: "4px",
+   cursor: disabled || loading ? "not-allowed" : "pointer",
+   opacity: disabled || loading ? 0.6 : 1,
+   transition: "all 0.2s ease",
+   whiteSpace: "nowrap",
+   width: fullWidth ? "100%" : undefined,
+   touchAction: "manipulation", // Eliminates 300ms tap delay on mobile
+   ...VARIANT_STYLES[variant],
+   ...SIZE_STYLES[size],
+   ...(isHovered && !disabled && !loading ? HOVER_STYLES[variant] : {}),
+   ...(isActive && !disabled && !loading ? ACTIVE_STYLES[variant] : {}),
+   ...style,
+ };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (loading || disabled) return;
@@ -293,18 +294,19 @@ export const IconButton: React.FC<IconButtonProps> = ({
   const [isHovered, setIsHovered] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
 
-  const baseStyles: CSSProperties = {
-    width: sizeMap[size],
-    height: sizeMap[size],
-    padding: 0,
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-    ...style,
-  };
+   const baseStyles: CSSProperties = {
+     width: sizeMap[size],
+     height: sizeMap[size],
+     padding: 0,
+     borderRadius: "50%",
+     display: "flex",
+     alignItems: "center",
+     justifyContent: "center",
+     cursor: "pointer",
+     transition: "all 0.2s ease",
+     touchAction: "manipulation", // Eliminates 300ms tap delay on mobile
+     ...style,
+   };
 
   const handleMouseDown = () => {
     setIsActive(true);
