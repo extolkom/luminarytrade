@@ -14,6 +14,7 @@ import {
     Tooltip,
     Sector,
 } from 'recharts';
+import { useTheme } from '@mui/material/styles';
 import { RiskDistributionSlice } from '../../types/dashboard.types';
 import ChartCard from './ChartCard';
 
@@ -65,6 +66,9 @@ const RiskDistributionChart: React.FC<Props> = ({ data, loading }) => {
     ];
 
     const total = data.reduce((s, d) => s + d.value, 0);
+    const theme = useTheme();
+    const isMobile = theme.breakpoints.down('sm');
+    const chartHeight = isMobile ? 200 : 260;
 
     return (
         <ChartCard
@@ -76,7 +80,7 @@ const RiskDistributionChart: React.FC<Props> = ({ data, loading }) => {
             exportFilename="risk-distribution"
             data-testid="risk-distribution-chart"
         >
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={chartHeight}>
                 <PieChart>
                     <Pie
                         data={data}
