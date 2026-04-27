@@ -5,6 +5,8 @@ import { useAuth } from "./context/AuthContext";
 import AuthPage from "./components/auth/AuthPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ResponsiveNavigation } from "./components/ResponsiveNavigation";
+import LanguageSwitcher from "./components/LanguageSwitcher";
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const CreditScoring = lazy(() => import("./components/CreditScoring"));
@@ -12,6 +14,10 @@ const FraudDetection = lazy(() => import("./components/FraudDetection"));
 const WalletInterface = lazy(() => import("./components/WalletInterface"));
 const TransactionPage = lazy(() => import("./components/TransactionPage"));
 const GrowthHub = lazy(() => import("./components/GrowthHub"));
+const ReferralDashboard = lazy(() => import("./components/ReferralDashboard"));
+const AffiliateDashboard = lazy(() => import("./components/AffiliateDashboard"));
+const BugReportForm = lazy(() => import("./components/BugReportForm"));
+const NotificationCenter = lazy(() => import("./components/NotificationCenter"));
 const ResponsiveExamples = lazy(
   () => import("./components/examples/ResponsiveComponentExamples"),
 );
@@ -56,6 +62,26 @@ const navLinks = [
     prefetch: () => import("./components/GrowthHub"),
   },
   {
+    to: "/referrals",
+    label: "Referrals",
+    prefetch: () => import("./components/ReferralDashboard"),
+  },
+  {
+    to: "/affiliate",
+    label: "Affiliate",
+    prefetch: () => import("./components/AffiliateDashboard"),
+  },
+  {
+    to: "/bug-reports",
+    label: "Bug Reports",
+    prefetch: () => import("./components/BugReportForm"),
+  },
+  {
+    to: "/notifications",
+    label: "Notifications",
+    prefetch: () => import("./components/NotificationCenter"),
+  },
+  {
     to: "/responsive-examples",
     label: "Responsive Examples",
     prefetch: () => import("./components/examples/ResponsiveComponentExamples"),
@@ -69,6 +95,7 @@ const navLinks = [
 
 const App: React.FC = () => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "background.default" }}>
@@ -98,6 +125,10 @@ const App: React.FC = () => {
               <Route path="/wallet" element={<WalletInterface />} />
               <Route path="/transactions" element={<TransactionPage />} />
               <Route path="/growth" element={<GrowthHub />} />
+              <Route path="/referrals" element={<ReferralDashboard />} />
+              <Route path="/affiliate" element={<AffiliateDashboard />} />
+              <Route path="/bug-reports" element={<BugReportForm />} />
+              <Route path="/notifications" element={<NotificationCenter />} />
             </Route>
             <Route path="/waitlist" element={<Waitlist />} />
             <Route
